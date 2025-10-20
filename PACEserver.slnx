@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/00.Core/" />
+  <Folder Name="/src/00.Core/00.BusinessModels/">
+    <Project Path="Abstractions/Models.Abstractions.csproj" />
+    <Project Path="Models/Models.csproj" />
+  </Folder>
+  <Folder Name="/src/00.Core/01.Application/">
+    <Project Path="Application.Abstractions/Application.Abstractions.csproj" />
+    <Project Path="Application/Application.csproj" />
+  </Folder>
+  <Folder Name="/src/03.API/">
+    <Project Path="PACEserver.csproj" />
+  </Folder>
+</Solution>
