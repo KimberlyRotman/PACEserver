@@ -7,6 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="Application.Abstractions\**" />
+    <Compile Remove="Application\**" />
+    <Compile Remove="Models\**" />
+    <Content Remove="Abstractions\**" />
+    <Content Remove="Application.Abstractions\**" />
+    <Content Remove="Application\**" />
+    <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Application.Abstractions\**" />
+    <EmbeddedResource Remove="Application\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Abstractions\**" />
+    <None Remove="Application.Abstractions\**" />
+    <None Remove="Application\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
@@ -15,6 +34,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.3.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Application.Abstractions\Application.Abstractions.csproj" />
+    <ProjectReference Include="Application\Application.csproj" />
+    <ProjectReference Include="Models\Models.csproj" />
   </ItemGroup>
 
 </Project>
