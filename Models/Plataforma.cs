@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models;
 
+[Table("Plataformas")]
 public class Plataforma
 {
+    [Key]
     public Guid Id { get; set; }
 
     [Required]

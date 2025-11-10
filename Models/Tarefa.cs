@@ -1,14 +1,21 @@
 ﻿using Models.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models;
 
+[Table ("Tarefas")]
 public class Tarefa
 {
+    [Key]
     public Guid Id { get; set; }
+
     [Required]
     [StringLength(50)]
     public string? Titulo { get; set; } = string.Empty;
+
+    [StringLength(300)]
+
     public string? Descricao { get; set; }
     public int MaximoIntegrantes { get; set; } = 1;
     public TipoTarefa Tipo { get; set; }
