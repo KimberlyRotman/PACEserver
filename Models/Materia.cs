@@ -1,8 +1,13 @@
-﻿namespace Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models;
 
 public class Materia
 {
     public Guid Id { get; set; }
+
+    [Required]
+    [StringLength(50)]
     public string Nome { get; set; } = string.Empty;
     public string? Codigo { get; set; }
     public Professor Professor { get; set; } = new Professor();

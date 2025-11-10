@@ -1,8 +1,13 @@
-﻿namespace Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models;
 
 public class Aluno
 {
     public Guid Id { get; set; }
+
+    [Required]
+    [StringLength(50)]
     public string Nome { get; private set; }
     public string Email { get; set; } = string.Empty;
     public bool Admin { get; set; }
