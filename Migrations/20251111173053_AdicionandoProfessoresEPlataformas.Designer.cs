@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251110173248_DataAnnotations")]
-    partial class DataAnnotations
+    [Migration("20251111173053_AdicionandoProfessoresEMaterias")]
+    partial class AdicionandoProfessoresEMaterias
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,23 +82,23 @@ namespace PACEserver.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Codigo")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("IdProfessor")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid>("ProfessorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdProfessor");
+                    b.HasIndex("ProfessorId");
 
                     b.ToTable("Materias");
                 });
@@ -272,7 +272,7 @@ namespace PACEserver.Migrations
                 {
                     b.HasOne("Models.Professor", "Professor")
                         .WithMany()
-                        .HasForeignKey("IdProfessor")
+                        .HasForeignKey("ProfessorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -288,7 +288,7 @@ namespace PACEserver.Migrations
                         .IsRequired();
 
                     b.HasOne("Models.Materia", "Materia")
-                        .WithMany("Matriculas")
+                        .WithMany()
                         .HasForeignKey("MateriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -354,8 +354,6 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
-                    b.Navigation("Matriculas");
-
                     b.Navigation("Tarefas");
                 });
 

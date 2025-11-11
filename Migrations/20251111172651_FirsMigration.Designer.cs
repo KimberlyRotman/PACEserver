@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251109232110_AjusteTabelasDataAnnotations")]
-    partial class AjusteTabelasDataAnnotations
+    [Migration("20251111172651_FirsMigration")]
+    partial class FirsMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,8 +82,8 @@ namespace PACEserver.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Codigo")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
@@ -186,7 +186,8 @@ namespace PACEserver.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<Guid>("MateriaId")
                         .HasColumnType("uniqueidentifier");
@@ -287,7 +288,7 @@ namespace PACEserver.Migrations
                         .IsRequired();
 
                     b.HasOne("Models.Materia", "Materia")
-                        .WithMany("Matriculas")
+                        .WithMany()
                         .HasForeignKey("MateriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -353,8 +354,6 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
-                    b.Navigation("Matriculas");
-
                     b.Navigation("Tarefas");
                 });
 

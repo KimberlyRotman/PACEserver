@@ -12,14 +12,13 @@ public class Materia
     [Required]
     [StringLength(50)]
     public string Nome { get; set; } = string.Empty;
-    public string? Codigo { get; set; }
+    public int Codigo { get; set; }
 
     [ForeignKey("Professor")]
-    public Guid IdProfessor { get; set; }
+    public Guid ProfessorId { get; set; }
     public Professor Professor { get; set; }
     public DateTime DataCriacao { get; set; } = DateTime.Now;
     public List<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
-    public List<Matricula>? Matriculas { get; set; } = new List<Matricula>();
 
     public Materia()
     {

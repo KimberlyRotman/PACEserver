@@ -5,7 +5,7 @@
 namespace PACEserver.Migrations
 {
     /// <inheritdoc />
-    public partial class AdicionandoDados : Migration
+    public partial class AdicionandoProfessoresEMaterias : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,8 @@ namespace PACEserver.Migrations
                 VALUES ('{Guid.NewGuid()}', 'Aleffer Rocha', 'aleffer.rocha@ifpr.edu.br')");
             migrationBuilder.Sql($@"INSERT INTO Professores (Id, Nome, Email)
                 VALUES ('{Guid.NewGuid()}', 'William Simão de Deus', 'william.deus@ifpr.edu.br')");
+            migrationBuilder.Sql($@"INSERT INTO Professores (Id, Nome, Email)
+                VALUES ('{Guid.NewGuid()}', 'Provisório', 'Provisorio')");
 
             migrationBuilder.Sql($@"INSERT INTO Plataformas (Id, Nome, Link)
                 VALUES ('{Guid.NewGuid()}', 'Suap', 'https://suap.ifpr.edu.br/accounts/login/?next=/')");
@@ -51,12 +53,11 @@ namespace PACEserver.Migrations
                 VALUES ('{Guid.NewGuid()}', 'Presencial', 'none')");
         }
 
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("Delete form Professores");
-            migrationBuilder.Sql("Delete form Plataforma");
+            migrationBuilder.Sql("DELETE FROM Professores");
+            migrationBuilder.Sql("DELETE FROM Plataformas");
         }
     }
 }
