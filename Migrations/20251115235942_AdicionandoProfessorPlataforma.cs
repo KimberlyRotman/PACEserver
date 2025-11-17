@@ -5,9 +5,8 @@
 namespace PACEserver.Migrations
 {
     /// <inheritdoc />
-    public partial class AdicionandoProfessoresEMaterias : Migration
+    public partial class AdicionandoProfessorPlataforma : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"INSERT INTO Professores (Id, Nome, Email)
@@ -61,3 +60,4 @@ namespace PACEserver.Migrations
         }
     }
 }
+

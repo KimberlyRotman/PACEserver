@@ -7,5 +7,6 @@ internal interface IAluno
     string Nome { get; set; }
     bool Admin { get; set; }
     string Email { get; set; }
+    ICollection<Materia>? Matriculas { get; set; }
     DateTime? DataCadastro { get; set; }
 }

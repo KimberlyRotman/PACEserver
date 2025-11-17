@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251111173053_AdicionandoProfessoresEMaterias")]
-    partial class AdicionandoProfessoresEMaterias
+    [Migration("20251117111601_SeedMatriculas")]
+    partial class SeedMatriculas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,7 @@ namespace PACEserver.Migrations
                     b.ToTable("Materias");
                 });
 
-            modelBuilder.Entity("Models.Matricula", b =>
+            modelBuilder.Entity("Models.MateriaAluno", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,9 +111,6 @@ namespace PACEserver.Migrations
 
                     b.Property<Guid>("AlunoId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DataMatricula")
-                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("MateriaId")
                         .HasColumnType("uniqueidentifier");
@@ -124,7 +121,7 @@ namespace PACEserver.Migrations
 
                     b.HasIndex("MateriaId");
 
-                    b.ToTable("Matriculas");
+                    b.ToTable("MateriaAlunos");
                 });
 
             modelBuilder.Entity("Models.Plataforma", b =>
@@ -279,16 +276,16 @@ namespace PACEserver.Migrations
                     b.Navigation("Professor");
                 });
 
-            modelBuilder.Entity("Models.Matricula", b =>
+            modelBuilder.Entity("Models.MateriaAluno", b =>
                 {
                     b.HasOne("Models.Aluno", "Aluno")
-                        .WithMany("Matriculas")
+                        .WithMany("Materias")
                         .HasForeignKey("AlunoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Materia", "Materia")
-                        .WithMany()
+                        .WithMany("Alunos")
                         .HasForeignKey("MateriaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -344,7 +341,7 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Aluno", b =>
                 {
-                    b.Navigation("Matriculas");
+                    b.Navigation("Materias");
                 });
 
             modelBuilder.Entity("Models.Equipe", b =>
@@ -354,6 +351,8 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
+                    b.Navigation("Alunos");
+
                     b.Navigation("Tarefas");
                 });
 

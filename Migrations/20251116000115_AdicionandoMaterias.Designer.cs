@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PACEserver.Contexts;
 
@@ -11,9 +12,11 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116000115_AdicionandoMaterias")]
+    partial class AdicionandoMaterias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,6 +82,9 @@ namespace PACEserver.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AlunoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Codigo")
                         .HasColumnType("int");
 
@@ -95,30 +101,11 @@ namespace PACEserver.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AlunoId");
+
                     b.HasIndex("ProfessorId");
 
                     b.ToTable("Materias");
-                });
-
-            modelBuilder.Entity("Models.MateriaAluno", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AlunoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MateriaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlunoId");
-
-                    b.HasIndex("MateriaId");
-
-                    b.ToTable("MateriaAlunos");
                 });
 
             modelBuilder.Entity("Models.Plataforma", b =>
@@ -264,6 +251,10 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
+                    b.HasOne("Models.Aluno", null)
+                        .WithMany("Matriculas")
+                        .HasForeignKey("AlunoId");
+
                     b.HasOne("Models.Professor", "Professor")
                         .WithMany()
                         .HasForeignKey("ProfessorId")
@@ -271,25 +262,6 @@ namespace PACEserver.Migrations
                         .IsRequired();
 
                     b.Navigation("Professor");
-                });
-
-            modelBuilder.Entity("Models.MateriaAluno", b =>
-                {
-                    b.HasOne("Models.Aluno", "Aluno")
-                        .WithMany("Materias")
-                        .HasForeignKey("AlunoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.Materia", "Materia")
-                        .WithMany("Alunos")
-                        .HasForeignKey("MateriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Aluno");
-
-                    b.Navigation("Materia");
                 });
 
             modelBuilder.Entity("Models.Tarefa", b =>
@@ -338,7 +310,7 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Aluno", b =>
                 {
-                    b.Navigation("Materias");
+                    b.Navigation("Matriculas");
                 });
 
             modelBuilder.Entity("Models.Equipe", b =>
@@ -348,8 +320,6 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
-                    b.Navigation("Alunos");
-
                     b.Navigation("Tarefas");
                 });
 

@@ -12,13 +12,18 @@ public class Materia
     [Required]
     [StringLength(50)]
     public string Nome { get; set; } = string.Empty;
+
     public int Codigo { get; set; }
 
     [ForeignKey("Professor")]
     public Guid ProfessorId { get; set; }
     public Professor Professor { get; set; }
-    public DateTime DataCriacao { get; set; } = DateTime.Now;
-    public List<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
+
+    public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+
+    public List<Tarefa> Tarefas { get; set; } = new();
+
+    public ICollection<MateriaAluno> Alunos { get; set; } = new List<MateriaAluno>();
 
     public Materia()
     {

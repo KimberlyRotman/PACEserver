@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251111172651_FirsMigration")]
-    partial class FirsMigration
+    [Migration("20251116001109_AdicionandoAlunos")]
+    partial class AdicionandoAlunos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,9 @@ namespace PACEserver.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AlunoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Codigo")
                         .HasColumnType("int");
 
@@ -98,33 +101,11 @@ namespace PACEserver.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AlunoId");
+
                     b.HasIndex("ProfessorId");
 
                     b.ToTable("Materias");
-                });
-
-            modelBuilder.Entity("Models.Matricula", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AlunoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DataMatricula")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("MateriaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlunoId");
-
-                    b.HasIndex("MateriaId");
-
-                    b.ToTable("Matriculas");
                 });
 
             modelBuilder.Entity("Models.Plataforma", b =>
@@ -270,6 +251,10 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
+                    b.HasOne("Models.Aluno", null)
+                        .WithMany("Matriculas")
+                        .HasForeignKey("AlunoId");
+
                     b.HasOne("Models.Professor", "Professor")
                         .WithMany()
                         .HasForeignKey("ProfessorId")
@@ -277,25 +262,6 @@ namespace PACEserver.Migrations
                         .IsRequired();
 
                     b.Navigation("Professor");
-                });
-
-            modelBuilder.Entity("Models.Matricula", b =>
-                {
-                    b.HasOne("Models.Aluno", "Aluno")
-                        .WithMany("Matriculas")
-                        .HasForeignKey("AlunoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.Materia", "Materia")
-                        .WithMany()
-                        .HasForeignKey("MateriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Aluno");
-
-                    b.Navigation("Materia");
                 });
 
             modelBuilder.Entity("Models.Tarefa", b =>

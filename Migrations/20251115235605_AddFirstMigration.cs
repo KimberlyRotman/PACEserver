@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PACEserver.Migrations
 {
     /// <inheritdoc />
-    public partial class FirsMigration : Migration
+    public partial class AddFirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,6 +38,22 @@ namespace PACEserver.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Alunos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Admin = table.Column<bool>(type: "bit", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EquipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Alunos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Materias",
                 columns: table => new
                 {
@@ -45,11 +61,17 @@ namespace PACEserver.Migrations
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Codigo = table.Column<int>(type: "int", nullable: false),
                     ProfessorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AlunoId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Materias", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Materias_Alunos_AlunoId",
+                        column: x => x.AlunoId,
+                        principalTable: "Alunos",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Materias_Professores_ProfessorId",
                         column: x => x.ProfessorId,
@@ -111,53 +133,6 @@ namespace PACEserver.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Alunos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Admin = table.Column<bool>(type: "bit", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EquipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Alunos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Alunos_Equipes_EquipeId",
-                        column: x => x.EquipeId,
-                        principalTable: "Equipes",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Matriculas",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AlunoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MateriaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DataMatricula = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Matriculas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Matriculas_Alunos_AlunoId",
-                        column: x => x.AlunoId,
-                        principalTable: "Alunos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Matriculas_Materias_MateriaId",
-                        column: x => x.MateriaId,
-                        principalTable: "Materias",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TarefasAlunos",
                 columns: table => new
                 {
@@ -203,19 +178,14 @@ namespace PACEserver.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Materias_ProfessorId",
+                name: "IX_Materias_AlunoId",
                 table: "Materias",
-                column: "ProfessorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Matriculas_AlunoId",
-                table: "Matriculas",
                 column: "AlunoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Matriculas_MateriaId",
-                table: "Matriculas",
-                column: "MateriaId");
+                name: "IX_Materias_ProfessorId",
+                table: "Materias",
+                column: "ProfessorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tarefas_MateriaId",
@@ -241,19 +211,24 @@ namespace PACEserver.Migrations
                 name: "IX_TarefasAlunos_TarefaId",
                 table: "TarefasAlunos",
                 column: "TarefaId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Alunos_Equipes_EquipeId",
+                table: "Alunos",
+                column: "EquipeId",
+                principalTable: "Equipes",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Matriculas");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Alunos_Equipes_EquipeId",
+                table: "Alunos");
 
             migrationBuilder.DropTable(
                 name: "TarefasAlunos");
-
-            migrationBuilder.DropTable(
-                name: "Alunos");
 
             migrationBuilder.DropTable(
                 name: "Equipes");
@@ -266,6 +241,9 @@ namespace PACEserver.Migrations
 
             migrationBuilder.DropTable(
                 name: "Plataformas");
+
+            migrationBuilder.DropTable(
+                name: "Alunos");
 
             migrationBuilder.DropTable(
                 name: "Professores");
