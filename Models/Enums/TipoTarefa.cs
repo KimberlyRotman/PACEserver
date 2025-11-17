@@ -2,7 +2,7 @@
 
 public enum TipoTarefa
 {
-    Prova = 0,
-    Atividade = 1,
-    Trabalho = 2,
+    Prova = 1,
+    Atividade = 2,
+    Trabalho = 3,
 }

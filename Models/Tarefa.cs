@@ -25,8 +25,9 @@ public class Tarefa
     public DateTime? DataEntrega { get; set; }
     public DateTime DataCriacao { get; set; } = DateTime.Now;
 
+    public Guid PlataformaId { get; set; }
     public Plataforma Plataforma { get; set; }
-    public Equipe? Equipe { get; set; }
+
     public Materia Materia { get; set; } = new Materia();
 
 

@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251117111601_SeedMatriculas")]
-    partial class SeedMatriculas
+    [Migration("20251117154945_AdicionandoMatriculas")]
+    partial class AdicionandoMatriculas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,8 +70,7 @@ namespace PACEserver.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TarefaId")
-                        .IsUnique();
+                    b.HasIndex("TarefaId");
 
                     b.ToTable("Equipes");
                 });
@@ -257,8 +256,8 @@ namespace PACEserver.Migrations
             modelBuilder.Entity("Models.Equipe", b =>
                 {
                     b.HasOne("Models.Tarefa", "Tarefa")
-                        .WithOne("Equipe")
-                        .HasForeignKey("Models.Equipe", "TarefaId")
+                        .WithMany()
+                        .HasForeignKey("TarefaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -354,11 +353,6 @@ namespace PACEserver.Migrations
                     b.Navigation("Alunos");
 
                     b.Navigation("Tarefas");
-                });
-
-            modelBuilder.Entity("Models.Tarefa", b =>
-                {
-                    b.Navigation("Equipe");
                 });
 #pragma warning restore 612, 618
         }

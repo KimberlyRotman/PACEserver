@@ -12,8 +12,8 @@ using PACEserver.Contexts;
 namespace PACEserver.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251115235942_AdicionandoProfessorPlataforma")]
-    partial class AdicionandoProfessorPlataforma
+    [Migration("20251117154740_AdicionandoAlunos")]
+    partial class AdicionandoAlunos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,8 +70,7 @@ namespace PACEserver.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TarefaId")
-                        .IsUnique();
+                    b.HasIndex("TarefaId");
 
                     b.ToTable("Equipes");
                 });
@@ -80,9 +79,6 @@ namespace PACEserver.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AlunoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Codigo")
@@ -101,11 +97,30 @@ namespace PACEserver.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlunoId");
-
                     b.HasIndex("ProfessorId");
 
                     b.ToTable("Materias");
+                });
+
+            modelBuilder.Entity("Models.MateriaAluno", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AlunoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MateriaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlunoId");
+
+                    b.HasIndex("MateriaId");
+
+                    b.ToTable("MateriaAlunos");
                 });
 
             modelBuilder.Entity("Models.Plataforma", b =>
@@ -241,8 +256,8 @@ namespace PACEserver.Migrations
             modelBuilder.Entity("Models.Equipe", b =>
                 {
                     b.HasOne("Models.Tarefa", "Tarefa")
-                        .WithOne("Equipe")
-                        .HasForeignKey("Models.Equipe", "TarefaId")
+                        .WithMany()
+                        .HasForeignKey("TarefaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -251,10 +266,6 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
-                    b.HasOne("Models.Aluno", null)
-                        .WithMany("Matriculas")
-                        .HasForeignKey("AlunoId");
-
                     b.HasOne("Models.Professor", "Professor")
                         .WithMany()
                         .HasForeignKey("ProfessorId")
@@ -262,6 +273,25 @@ namespace PACEserver.Migrations
                         .IsRequired();
 
                     b.Navigation("Professor");
+                });
+
+            modelBuilder.Entity("Models.MateriaAluno", b =>
+                {
+                    b.HasOne("Models.Aluno", "Aluno")
+                        .WithMany("Materias")
+                        .HasForeignKey("AlunoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Materia", "Materia")
+                        .WithMany("Alunos")
+                        .HasForeignKey("MateriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Aluno");
+
+                    b.Navigation("Materia");
                 });
 
             modelBuilder.Entity("Models.Tarefa", b =>
@@ -310,7 +340,7 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Aluno", b =>
                 {
-                    b.Navigation("Matriculas");
+                    b.Navigation("Materias");
                 });
 
             modelBuilder.Entity("Models.Equipe", b =>
@@ -320,12 +350,9 @@ namespace PACEserver.Migrations
 
             modelBuilder.Entity("Models.Materia", b =>
                 {
-                    b.Navigation("Tarefas");
-                });
+                    b.Navigation("Alunos");
 
-            modelBuilder.Entity("Models.Tarefa", b =>
-                {
-                    b.Navigation("Equipe");
+                    b.Navigation("Tarefas");
                 });
 #pragma warning restore 612, 618
         }
