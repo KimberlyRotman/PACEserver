@@ -28,6 +28,7 @@ public class MateriaController : ControllerBase
     }
 
     [HttpGet("{id:Guid}")]
+
     public ActionResult<Materia> GetMateriaById(Guid id)
     {
         var materia = _context.Materias.Find(id);
@@ -38,6 +39,7 @@ public class MateriaController : ControllerBase
         return Ok(materia);
     }
 
+    [HttpGet("{id:Guid}/tarefas")]
     public ActionResult<IEnumerable<Tarefa>> GetTarefasDaMateria(Guid id)
     {
         var materia = _context.Materias
