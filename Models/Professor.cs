@@ -10,6 +10,9 @@ public class Professor
     public Guid Id { get; set; }
 
     [Required]
+    public int Codigo { get; set; }
+
+    [Required]
     [StringLength(50)]
     public string? Nome { get; set; }
 

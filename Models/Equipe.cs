@@ -9,6 +9,10 @@ public class Equipe
     [Key]
     public Guid Id { get; set; }
 
+    [Required]
+    public int Codigo { get; set; }
+
+
     [ForeignKey("Tarefa")]
     public Guid TarefaId { get; set; }
 

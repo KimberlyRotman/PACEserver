@@ -10,10 +10,11 @@ public class Materia
     public Guid Id { get; set; }
 
     [Required]
+    public int Codigo { get; set; }
+
+    [Required]
     [StringLength(50)]
     public string Nome { get; set; } = string.Empty;
-
-    public int Codigo { get; set; }
 
     [ForeignKey("Professor")]
     public Guid ProfessorId { get; set; }
