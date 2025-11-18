@@ -33,7 +33,7 @@ public class AlunoController : ControllerBase
         if (aluno is null) {
             return NotFound("Aluno não encontrado");
         }
-        return aluno;
+        return Ok(aluno);
     }
 
     [HttpGet("{codigo:int}")]
@@ -45,7 +45,7 @@ public class AlunoController : ControllerBase
         if (aluno is null)
             return NotFound("Aluno não encontrado");
 
-        return aluno;
+        return Ok(aluno);
     }
 
     [HttpGet("{id:Guid}/materias")]
@@ -61,7 +61,7 @@ public class AlunoController : ControllerBase
             .Select(am => am.Materia)
             .ToList();
 
-        return materias;
+        return Ok(materias);
     }
 
     [HttpGet("{id:Guid}/tarefas")]
@@ -78,6 +78,22 @@ public class AlunoController : ControllerBase
             .SelectMany(am => am.Materia.Tarefas)
             .ToList();
 
-        return tarefas;
+        return Ok(tarefas);
+    }
+
+    [HttpGet("{id:Guid}/alunos")]
+    public ActionResult<IEnumerable<Aluno>> GetAlunosDaMateria(Guid id)
+    {
+        var materiaExiste = _context.Materias.Any(m => m.Id == id);
+        if (!materiaExiste)
+            return NotFound("Matéria não encontrada");
+
+        var alunos = _context.MateriaAlunos
+            .Where(ma => ma.MateriaId == id)
+            .Include(ma => ma.Aluno)
+            .Select(ma => ma.Aluno)
+            .ToList();
+
+        return Ok(alunos);
     }
 }

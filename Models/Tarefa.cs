@@ -11,6 +11,9 @@ public class Tarefa
     public Guid Id { get; set; }
 
     [Required]
+    public int Codigo { get; set; }
+
+    [Required]
     [StringLength(50)]
     public string? Titulo { get; set; } = string.Empty;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using PACEserver.Contexts;
 
@@ -23,6 +24,46 @@ public class MateriaController : ControllerBase
         {
             return NotFound("Materias não encontrados");
         }
-        return materias;
+        return Ok(materias);
+    }
+
+    [HttpGet("{id:Guid}")]
+    public ActionResult<Materia> GetMateriaById(Guid id)
+    {
+        var materia = _context.Materias.Find(id);
+        if (materia is null)
+        {
+            return NotFound("Materia não encontrada");
+        }
+        return Ok(materia);
+    }
+
+    public ActionResult<IEnumerable<Tarefa>> GetTarefasDaMateria(Guid id)
+    {
+        var materia = _context.Materias
+            .Include(m => m.Tarefas)
+            .FirstOrDefault(m => m.Id == id);
+
+        if (materia is null)
+            return NotFound("Matéria não encontrada");
+
+        return Ok(materia.Tarefas);
+    }
+
+
+    [HttpGet("{id:Guid}/alunos")]
+    public ActionResult<IEnumerable<Aluno>> GetAlunosDaMateria(Guid id)
+    {
+        var materiaExiste = _context.Materias.Any(m => m.Id == id);
+        if (!materiaExiste)
+            return NotFound("Matéria não encontrada");
+
+        var alunos = _context.MateriaAlunos
+            .Where(ma => ma.MateriaId == id)
+            .Include(ma => ma.Aluno)
+            .Select(ma => ma.Aluno)
+            .ToList();
+
+        return Ok(alunos);
     }
 }
