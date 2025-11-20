@@ -36,7 +36,7 @@ public class AlunoController : ControllerBase
         return Ok(aluno);
     }
 
-    [HttpGet("{codigo:int}")]
+    [HttpGet("codigo/{codigo:int}")]
     public ActionResult<Aluno> GetAlunoByCodigo(int codigo)
     {
         var aluno = _context.Alunos
@@ -81,19 +81,35 @@ public class AlunoController : ControllerBase
         return Ok(tarefas);
     }
 
-    [HttpGet("{id:Guid}/alunos")]
-    public ActionResult<IEnumerable<Aluno>> GetAlunosDaMateria(Guid id)
+    [HttpPost]
+    public ActionResult Post(Aluno aluno)
     {
-        var materiaExiste = _context.Materias.Any(m => m.Id == id);
-        if (!materiaExiste)
-            return NotFound("Matéria não encontrada");
+        _context.Alunos.Add(aluno);
+        _context.SaveChanges();
 
-        var alunos = _context.MateriaAlunos
-            .Where(ma => ma.MateriaId == id)
-            .Include(ma => ma.Aluno)
-            .Select(ma => ma.Aluno)
-            .ToList();
+        return CreatedAtAction(
+            nameof(GetAlunoById),
+            new { id = aluno.Id },
+            aluno
+        );
+    }
 
-        return Ok(alunos);
+
+    [HttpPut]
+    public ActionResult Put(Aluno aluno)
+    {
+        if (aluno is null)
+        {
+            return BadRequest("Dados inválidos");
+        }
+
+        var alunoExistente = _context.Alunos.Find(aluno.Id);
+        if (alunoExistente is null)
+        {
+            return NotFound("Aluno não encontrado");
+        }
+        _context.Alunos.Update(aluno);
+        _context.SaveChanges();
+        return Ok(aluno);
     }
 }

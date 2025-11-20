@@ -68,4 +68,34 @@ public class MateriaController : ControllerBase
 
         return Ok(alunos);
     }
+
+    [HttpPost]
+    public ActionResult Post(Materia materia)
+    {
+        _context.Materias.Add(materia);
+        _context.SaveChanges();
+
+        return CreatedAtAction(
+            nameof(GetMateriaById),
+            new { id = materia.Id },
+            materia
+        );
+    }
+
+    [HttpPut]
+    public ActionResult Put(Materia materia)
+    {
+        if (materia is null)
+        {
+            return BadRequest("Dados inválidos");
+        }
+        var materiaExistente = _context.Materias.Find(materia.Id);
+        if (materiaExistente is null)
+        {
+            return NotFound("Materia não encontrada");
+        }
+        _context.Materias.Update(materia);
+        _context.SaveChanges();
+        return Ok(materia);
+    }
 }

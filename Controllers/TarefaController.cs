@@ -44,8 +44,39 @@ public class TarefaController : ControllerBase
             .FirstOrDefault(a => a.Codigo == codigo);
 
         if (tarefa is null)
-            return NotFound("Aluno não encontrado");
+            return NotFound("Tarefa não encontrada");
 
+        return Ok(tarefa);
+    }
+
+    [HttpPost]
+    public ActionResult Post(Tarefa tarefa)
+    {
+        _context.Tarefas.Add(tarefa);
+        _context.SaveChanges();
+
+        return CreatedAtAction(
+            nameof(GetTarefaById),
+            new { id = tarefa.Id },
+            tarefa
+        );
+    }
+
+    [HttpPut]
+    public ActionResult Put(Tarefa tarefa)
+    {
+        if (tarefa is null)
+        {
+            return BadRequest("Dados inválidos");
+        }
+
+        var tarefaExistente = _context.Tarefas.Find(tarefa.Id);
+        if (tarefaExistente is null)
+        {
+            return NotFound("Tarefa não encontrada");
+        }
+        _context.Tarefas.Update(tarefa);
+        _context.SaveChanges();
         return Ok(tarefa);
     }
 }
