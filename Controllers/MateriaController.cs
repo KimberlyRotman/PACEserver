@@ -98,4 +98,28 @@ public class MateriaController : ControllerBase
         _context.SaveChanges();
         return Ok(materia);
     }
+
+    [HttpDelete("{id:Guid}")]
+    public ActionResult Delete(Guid id) {
+        var materia = _context.Materias.Find(id);
+        if (materia is null) {
+            return NotFound("Materia não encontrada");
+        }
+        _context.Materias.Remove(materia);
+        _context.SaveChanges();
+        return Ok(materia);
+    }
+
+    [HttpDelete]
+    public ActionResult DeleteAll()
+        {
+        var materias = _context.Materias.ToList();
+        if (materias is null || materias.Count == 0) {
+            return NotFound("Nenhuma materia encontrada");
+        }
+        _context.Materias.RemoveRange(materias);
+        _context.SaveChanges();
+        return Ok("Todas as materias foram deletadas");
+    }
+
 }

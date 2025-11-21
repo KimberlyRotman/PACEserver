@@ -112,4 +112,17 @@ public class AlunoController : ControllerBase
         _context.SaveChanges();
         return Ok(aluno);
     }
+
+    [HttpDelete("{id:Guid}")]
+    public ActionResult Delete(Guid id)
+    {
+        var aluno = _context.Alunos.Find(id);
+        if (aluno is null)
+        {
+            return NotFound("Aluno não encontrado");
+        }
+        _context.Alunos.Remove(aluno);
+        _context.SaveChanges();
+        return Ok("Aluno deletado");
+    }
 }
