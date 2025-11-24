@@ -8,9 +8,9 @@ public class MateriaAluno
     public Guid Id { get; set; } = Guid.NewGuid();
 
     public Guid AlunoId { get; set; }
-    public required Aluno Aluno { get; set; }
+    public Aluno Aluno { get; set; }
 
     public Guid MateriaId { get; set; }
-    public required Materia Materia { get; set; }
+    public Materia Materia { get; set; }
 }
 

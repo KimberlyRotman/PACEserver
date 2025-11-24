@@ -95,6 +95,61 @@ public class AlunoController : ControllerBase
     }
 
 
+    [HttpPost("matricular")]
+    public ActionResult Matricular([FromBody] MatriculaRequest request)
+    {
+        if (!_context.Alunos.Any(a => a.Id == request.AlunoId))
+            return NotFound("Aluno não existe");
+
+        if (!_context.Materias.Any(m => m.Id == request.MateriaId))
+            return NotFound("Matéria não existe");
+
+        var jaMatriculado = _context.MateriaAlunos
+            .Any(ma => ma.AlunoId == request.AlunoId &&
+                       ma.MateriaId == request.MateriaId);
+
+        if (jaMatriculado)
+            return Conflict("Aluno já matriculado nesta matéria");
+
+        var matricula = new MateriaAluno
+        {
+            Id = Guid.NewGuid(),
+            AlunoId = request.AlunoId,
+            MateriaId = request.MateriaId
+            // NÃO setar as propriedades de navegação aqui
+        };
+
+        _context.MateriaAlunos.Add(matricula);
+
+        var tarefasDaMateria = _context.Tarefas
+            .Where(t => t.Materia.Id == request.MateriaId)
+            .Select(t => t.Id)
+            .ToList();
+
+        foreach (var tarefaId in tarefasDaMateria)
+        {
+            _context.TarefasAlunos.Add(new TarefaAluno
+            {
+                Id = Guid.NewGuid(),
+                TarefaId = tarefaId,
+                AlunoId = request.AlunoId,
+                DataCadastro = DateTime.UtcNow
+            });
+        }
+
+        _context.SaveChanges();
+
+        return Ok("Aluno matriculado com sucesso");
+    }
+
+
+    _context.SaveChanges();
+
+        return Ok("Aluno matriculado com sucesso");
+    }
+
+
+
     [HttpPut]
     public ActionResult Put(Aluno aluno)
     {

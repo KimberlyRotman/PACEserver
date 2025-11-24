@@ -53,14 +53,28 @@ public class TarefaController : ControllerBase
     public ActionResult Post(Tarefa tarefa)
     {
         _context.Tarefas.Add(tarefa);
+
+        var alunosDaMateria = _context.MateriaAlunos
+            .Where(ma => ma.MateriaId == tarefa.Materia.Id)
+            .Select(ma => ma.AlunoId)
+            .ToList();
+
+        foreach (var alunoId in alunosDaMateria)
+        {
+            _context.TarefasAlunos.Add(new TarefaAluno
+            {
+                Id = Guid.NewGuid(),
+                TarefaId = tarefa.Id,
+                AlunoId = alunoId,
+                DataCadastro = DateTime.UtcNow
+            });
+        }
+
         _context.SaveChanges();
 
-        return CreatedAtAction(
-            nameof(GetTarefaById),
-            new { id = tarefa.Id },
-            tarefa
-        );
+        return CreatedAtAction(nameof(GetTarefaById), new { id = tarefa.Id }, tarefa);
     }
+
 
     [HttpPut]
     public ActionResult Put(Tarefa tarefa)
