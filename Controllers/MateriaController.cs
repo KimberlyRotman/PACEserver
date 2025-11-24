@@ -19,7 +19,7 @@ public class MateriaController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Materia>> GetAllMaterias()
     {
-        var materias = _context.Materias.ToList();
+        var materias = _context.Materias.AsNoTracking().ToList();
         if (materias is null)
         {
             return NotFound("Materias não encontrados");
@@ -64,6 +64,7 @@ public class MateriaController : ControllerBase
             .Where(ma => ma.MateriaId == id)
             .Include(ma => ma.Aluno)
             .Select(ma => ma.Aluno)
+            .AsNoTracking()
             .ToList();
 
         return Ok(alunos);

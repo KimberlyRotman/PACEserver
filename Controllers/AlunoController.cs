@@ -19,7 +19,7 @@ public class AlunoController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable <Aluno>> GetAllAlunos()
     {
-        var alunos = _context.Alunos.ToList();
+        var alunos = _context.Alunos.AsNoTracking().ToList();
         if (alunos is null) {
             return NotFound("Alunos não encontrados");
         }
@@ -59,6 +59,7 @@ public class AlunoController : ControllerBase
             .Where(am => am.AlunoId == id)
             .Include(am => am.Materia)
             .Select(am => am.Materia)
+            .AsNoTracking()
             .ToList();
 
         return Ok(materias);
@@ -76,6 +77,7 @@ public class AlunoController : ControllerBase
             .Include(am => am.Materia)
                 .ThenInclude(m => m.Tarefas)
             .SelectMany(am => am.Materia.Tarefas)
+            .AsNoTracking()
             .ToList();
 
         return Ok(tarefas);
@@ -95,59 +97,52 @@ public class AlunoController : ControllerBase
     }
 
 
-    [HttpPost("matricular")]
-    public ActionResult Matricular([FromBody] MatriculaRequest request)
+[HttpPost("matricular")]
+public ActionResult Matricular([FromBody] MatriculaRequest request)
+{
+    if (!_context.Alunos.Any(a => a.Id == request.AlunoId))
+        return NotFound("Aluno não existe");
+
+    if (!_context.Materias.Any(m => m.Id == request.MateriaId))
+        return NotFound("Matéria não existe");
+
+    var jaMatriculado = _context.MateriaAlunos
+        .Any(ma => ma.AlunoId == request.AlunoId &&
+                   ma.MateriaId == request.MateriaId);
+
+    if (jaMatriculado)
+        return Conflict("Aluno já matriculado nesta matéria");
+
+    var matricula = new MateriaAluno
     {
-        if (!_context.Alunos.Any(a => a.Id == request.AlunoId))
-            return NotFound("Aluno não existe");
+        Id = Guid.NewGuid(),
+        AlunoId = request.AlunoId,
+        MateriaId = request.MateriaId
+        // NÃO setar as propriedades de navegação aqui
+    };
 
-        if (!_context.Materias.Any(m => m.Id == request.MateriaId))
-            return NotFound("Matéria não existe");
+    _context.MateriaAlunos.Add(matricula);
 
-        var jaMatriculado = _context.MateriaAlunos
-            .Any(ma => ma.AlunoId == request.AlunoId &&
-                       ma.MateriaId == request.MateriaId);
+    var tarefasDaMateria = _context.Tarefas
+        .Where(t => t.Materia.Id == request.MateriaId)
+        .Select(t => t.Id)
+        .ToList();
 
-        if (jaMatriculado)
-            return Conflict("Aluno já matriculado nesta matéria");
-
-        var matricula = new MateriaAluno
+    foreach (var tarefaId in tarefasDaMateria)
+    {
+        _context.TarefasAlunos.Add(new TarefaAluno
         {
             Id = Guid.NewGuid(),
+            TarefaId = tarefaId,
             AlunoId = request.AlunoId,
-            MateriaId = request.MateriaId
-            // NÃO setar as propriedades de navegação aqui
-        };
-
-        _context.MateriaAlunos.Add(matricula);
-
-        var tarefasDaMateria = _context.Tarefas
-            .Where(t => t.Materia.Id == request.MateriaId)
-            .Select(t => t.Id)
-            .ToList();
-
-        foreach (var tarefaId in tarefasDaMateria)
-        {
-            _context.TarefasAlunos.Add(new TarefaAluno
-            {
-                Id = Guid.NewGuid(),
-                TarefaId = tarefaId,
-                AlunoId = request.AlunoId,
-                DataCadastro = DateTime.UtcNow
-            });
-        }
-
-        _context.SaveChanges();
-
-        return Ok("Aluno matriculado com sucesso");
+            DataCadastro = DateTime.UtcNow
+        });
     }
-
 
     _context.SaveChanges();
 
-        return Ok("Aluno matriculado com sucesso");
-    }
-
+    return Ok("Aluno matriculado com sucesso");
+}
 
 
     [HttpPut]

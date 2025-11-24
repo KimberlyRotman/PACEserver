@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using PACEserver.Contexts;
 
@@ -18,7 +19,7 @@ public class TarefaController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Tarefa>> GetAllTarefas()
     {
-        var tarefas = _context.Tarefas.ToList();
+        var tarefas = _context.Tarefas.AsNoTracking().ToList();
         if (tarefas is null)
         {
             return NotFound("Tarefas não encontradas");
