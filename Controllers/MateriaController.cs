@@ -42,14 +42,15 @@ public class MateriaController : ControllerBase
     [HttpGet("{id:Guid}/tarefas")]
     public ActionResult<IEnumerable<Tarefa>> GetTarefasDaMateria(Guid id)
     {
-        var materia = _context.Materias
-            .Include(m => m.Tarefas)
-            .FirstOrDefault(m => m.Id == id);
+        var tarefas = _context.Tarefas
+            .Where(t => t.Materia.Id == id)
+            .Include(t => t.Materia)
+            .ThenInclude(m => m.Professor)
+            .Include(t => t.Plataforma)
+            .AsNoTracking()
+            .ToList();
 
-        if (materia is null)
-            return NotFound("Matéria não encontrada");
-
-        return Ok(materia.Tarefas);
+        return Ok(tarefas);
     }
 
 

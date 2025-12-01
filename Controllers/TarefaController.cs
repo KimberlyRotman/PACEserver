@@ -30,11 +30,17 @@ public class TarefaController : ControllerBase
     [HttpGet("{id:Guid}")]
     public ActionResult<Tarefa> GetTarefaById(Guid id)
     {
-        var tarefa = _context.Tarefas.Find(id);
+        var tarefa = _context.Tarefas
+            .Include(t => t.Materia)
+            .Include(t => t.Plataforma)
+            .Include(t => t.Materia.Professor)
+            .FirstOrDefault(t => t.Id == id);
+
         if (tarefa is null)
         {
             return NotFound("Tarefa não encontrada");
         }
+
         return Ok(tarefa);
     }
 
