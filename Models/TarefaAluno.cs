@@ -1,4 +1,5 @@
-﻿using Models.Enums;
+﻿using Models.Alunos;
+using Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

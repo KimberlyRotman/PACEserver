@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Models.Alunos;
 using PACEserver.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,9 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
+
+builder.Services.AddScoped<PasswordHasher<Aluno>>();
+
 
 var app = builder.Build();
 

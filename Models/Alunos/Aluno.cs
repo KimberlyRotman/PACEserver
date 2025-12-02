@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models;
+namespace Models.Alunos;
 
 [Table ("Alunos")]
 public class Aluno
@@ -14,7 +14,7 @@ public class Aluno
 
     [Required]
     [StringLength(50)]
-    public string Nome { get; private set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
 
     public string Email { get; set; } = string.Empty;
 
@@ -24,6 +24,9 @@ public class Aluno
 
     // Navegação explícita para a tabela de junção
     public ICollection<MateriaAluno> Materias { get; set; } = new List<MateriaAluno>();
+
+    public string SenhaHash { get; set; } = string.Empty;
+
 }
 
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Alunos;
 using PACEserver.Contexts;
 
 namespace PACEserver.Controllers;

@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.Alunos;
+using Models.Alunos.Commands;
+
 using PACEserver.Contexts;
 
 namespace PACEserver.Controllers;
@@ -10,11 +15,14 @@ namespace PACEserver.Controllers;
 public class AlunoController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly PasswordHasher<Aluno> _passwordHasher;
 
-    public AlunoController(AppDbContext context)
+    public AlunoController(AppDbContext context, PasswordHasher<Aluno> passwordHasher)
     {
         _context = context;
+        _passwordHasher = passwordHasher;
     }
+
 
     [HttpGet]
     public ActionResult<IEnumerable <Aluno>> GetAllAlunos()
@@ -83,21 +91,56 @@ public class AlunoController : ControllerBase
         return Ok(tarefas);
     }
 
-    [HttpPost]
-    public ActionResult Post(Aluno aluno)
+    [HttpPost("cadastro")]
+    public ActionResult Cadastrar([FromBody] CreateAlunoDTO request)
     {
+        if (request == null)
+            return BadRequest("Dados inválidos");
+
+        var aluno = new Aluno
+        {
+            Id = Guid.NewGuid(),
+            Codigo = request.Codigo,
+            Nome = request.Nome,
+            Email = request.Email,
+            Admin = false,
+            DataCriacao = DateTime.UtcNow
+        };
+
+        aluno.SenhaHash = _passwordHasher.HashPassword(aluno, request.Senha);
+
         _context.Alunos.Add(aluno);
         _context.SaveChanges();
 
         return CreatedAtAction(
             nameof(GetAlunoById),
             new { id = aluno.Id },
-            aluno
+            new { aluno.Id, aluno.Nome, aluno.Email }
         );
     }
 
+    [HttpPost("login")]
+    public ActionResult Login([FromBody] CreateLoginDTO request)
+    {
+        var aluno = _context.Alunos.FirstOrDefault(a => a.Email == request.Email);
+        if (aluno is null)
+            return Unauthorized("Usuário não encontrado");
 
-[HttpPost("matricular")]
+        var resultado = _passwordHasher.VerifyHashedPassword(
+            aluno, aluno.SenhaHash, request.Senha);
+
+        if (resultado == PasswordVerificationResult.Success)
+        {
+            return Ok(new { mensagem = "Login bem-sucedido", aluno.Id, aluno.Nome });
+        }
+
+        return Unauthorized("Senha incorreta");
+    }
+
+
+
+
+    [HttpPost("matricular")]
 public ActionResult Matricular([FromBody] MatriculaRequest request)
 {
     if (!_context.Alunos.Any(a => a.Id == request.AlunoId))
@@ -118,7 +161,6 @@ public ActionResult Matricular([FromBody] MatriculaRequest request)
         Id = Guid.NewGuid(),
         AlunoId = request.AlunoId,
         MateriaId = request.MateriaId
-        // NÃO setar as propriedades de navegação aqui
     };
 
     _context.MateriaAlunos.Add(matricula);
