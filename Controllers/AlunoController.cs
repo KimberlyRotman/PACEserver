@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.Alunos;
 using Models.Alunos.Commands;
-
+using Models.NewFolder;
 using PACEserver.Contexts;
 
 namespace PACEserver.Controllers;
@@ -91,16 +91,23 @@ public class AlunoController : ControllerBase
         return Ok(tarefas);
     }
 
+
     [HttpPost("cadastro")]
     public ActionResult Cadastrar([FromBody] CreateAlunoDTO request)
     {
         if (request == null)
             return BadRequest("Dados inválidos");
 
+        int maiorCodigo = _context.Alunos.Any()
+            ? _context.Alunos.Max(a => a.Codigo)
+            : 4999;
+
+        int novoCodigo = maiorCodigo + 1;
+
         var aluno = new Aluno
         {
             Id = Guid.NewGuid(),
-            Codigo = request.Codigo,
+            Codigo = novoCodigo,
             Nome = request.Nome,
             Email = request.Email,
             Admin = false,
@@ -115,9 +122,10 @@ public class AlunoController : ControllerBase
         return CreatedAtAction(
             nameof(GetAlunoById),
             new { id = aluno.Id },
-            new { aluno.Id, aluno.Nome, aluno.Email }
+            new { aluno.Id, aluno.Nome, aluno.Email, aluno.Codigo }
         );
     }
+
 
     [HttpPost("login")]
     public ActionResult Login([FromBody] CreateLoginDTO request)

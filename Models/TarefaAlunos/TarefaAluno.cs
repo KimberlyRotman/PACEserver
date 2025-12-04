@@ -3,7 +3,7 @@ using Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models;
+namespace Models.NewFolder;
 
 [Table ("TarefasAlunos")]
 public class TarefaAluno

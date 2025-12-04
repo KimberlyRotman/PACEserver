@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.Alunos;
+using Models.NewFolder;
 
 namespace PACEserver.Contexts;
 
